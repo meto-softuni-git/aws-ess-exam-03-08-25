@@ -1,0 +1,19 @@
+
+
+# Local .infracost directories
+**/.infracost/*
+
+# Local .terraform directories
+**/.terraform/*
+# Local .terraform.lock.hcl files
+**/.terraform.lock.hcl
+**/.terraform-version
+# Local .terraform.tfstate files
+**/terraform.tfstate
+
+**/.ssh/*
+# Local .terraform.tfstate.backup files
+**/terraform.tfstate.backup
+# Local .terraform.tfvars files
+**/terraform.tfvars
+**/ubuntu_ssh_key.pem
