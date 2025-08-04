@@ -118,5 +118,5 @@ jobs:
       - name: Terraform Apply if changes detected
         run: |
           cd ${{ env.TF_ROOT }}
-          terraform destroy --auto-approve
-          # terraform apply --auto-approve tfplan-common
+          #terraform destroy --auto-approve
+          terraform apply --auto-approve tfplan-common
