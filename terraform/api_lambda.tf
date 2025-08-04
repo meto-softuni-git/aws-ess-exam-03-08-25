@@ -32,20 +32,20 @@ resource "aws_iam_policy_attachment" "lambda_logs" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-## create role lambda function to access dynamodb
-#resource "aws_iam_role_policy" "dynamodb_access" {
-#  name = "dynamodb-access"
-#  role = aws_iam_role.lambda_exec.id
-#
-#  policy = jsonencode({
-#    Version = "2012-10-17"
-#    Statement = [{
-#      Effect = "Allow"
-#      Action = ["dynamodb:PutItem"]
-#      Resource = aws_dynamodb_table.table_data.arn
-#    }]
-#  })
-#}
+# create role lambda function to access dynamodb
+resource "aws_iam_role_policy" "dynamodb_access" {
+  name = "dynamodb-access"
+  role = aws_iam_role.lambda_exec.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = ["dynamodb:PutItem"]
+      Resource = aws_dynamodb_table.table_data.arn
+    }]
+  })
+}
 
 resource "aws_iam_role_policy" "lambda_publish_sns" {
   name = "lambda_publish_sns"
@@ -75,7 +75,7 @@ resource "aws_lambda_function" "processing_json" {
   environment {
     variables = {
       SNS_TOPIC_ARN = aws_sns_topic.sns_topic_email.arn
-#      TABLE_NAME = aws_dynamodb_table.table_data.name
+      TABLE_NAME = aws_dynamodb_table.table_data.name
     }
   }
 }

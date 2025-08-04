@@ -3,12 +3,12 @@ import boto3
 import os
 import uuid
 import logging
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, time
 
 # Initialize the DynamoDB client
-#dynamodb = boto3.resource('dynamodb')
-#table_name = os.environ['TABLE_NAME']
-#table = dynamodb.Table(table_name)
+dynamodb = boto3.resource('dynamodb')
+table_name = os.environ['TABLE_NAME']
+table = dynamodb.Table(table_name)
 # Initialize the SNS client
 sns_client = boto3.client('sns')
 SNS_TOPIC_ARN = os.environ.get('SNS_TOPIC_ARN')
@@ -36,17 +36,25 @@ def lambda_handler(event, context):
         if not isValid:
             logger.info("Invalid item data")
             # Save the item to DynamoDB
-#            item = {
-#                'PK': f"item#{uuid}",
-#                'SK': f"item#{uuid}",
-#                'valid': body['valid'],
-#                'value': body['value'],
-#                'description': body['description'],
-#                'buyer': body['buyer'],
-#                'timestamp': current_timestamp
-#            }
-#            table.put_item(Item=item)
-#            logger.info(f"Item saved: {item}")
+            curr_time = datetime.now()
+            expiration_time = int(curr_time.timestamp()) + 86400
+
+            # Calculate expiration time 24 hours from now
+            expiration_time = datetime.now() + timedelta(hours=24)
+
+#            expiration_time = int(datetime.time) + 86400,  # 24 hours from now
+            item = {
+                'PK': f"item#{uuid}",
+                'SK': f"item#{uuid}",
+                'valid': body['valid'],
+                'value': body['value'],
+                'description': body['description'],
+                'buyer': body['buyer'],
+                'expiration_time': int(expiration_time.timestamp()),  # Store as Unix timestamp
+                'item_timestamp': current_timestamp
+            }
+            table.put_item(Item=item)
+            logger.info(f"Item saved: {item}")
         else:
             logger.info("Item data is valid")
             valid= body['valid']
