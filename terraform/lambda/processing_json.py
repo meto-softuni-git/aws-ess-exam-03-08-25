@@ -3,67 +3,65 @@ import boto3
 import os
 import uuid
 import logging
-from datetime import datetime, timedelta, timezone, time
+from datetime import datetime, timedelta
 
 # Initialize the DynamoDB client
-dynamodb = boto3.resource('dynamodb')
-table_name = os.environ['TABLE_NAME']
+dynamodb = boto3.resource("dynamodb")
+table_name = os.environ["TABLE_NAME"]
 table = dynamodb.Table(table_name)
 # Initialize the SNS client
-sns_client = boto3.client('sns')
-SNS_TOPIC_ARN = os.environ.get('SNS_TOPIC_ARN')
-
-
+sns_client = boto3.client("sns")
+SNS_TOPIC_ARN = os.environ.get("SNS_TOPIC_ARN")
 # Set up logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)  # or DEBUG, ERROR, etc.
-
-events = boto3.client('events')
+events = boto3.client("events")
 # Generate a unique UUID for the item
 uuid = str(uuid.uuid4())
+
 
 def lambda_handler(event, context):
     try:
         logger.debug(f"Event: {event}")
-        body = json.loads(event['body'])
-
-#	"valid": true,
-#	"value": 12,
-#	"description": "5W40 motor oil",
-#	"buyer": "Hristo"
+        body = json.loads(event["body"])
+        # "valid": true,
+        # "value": 12,
+        # "description": "5W40 motor oil",
+        # "buyer": "Hristo"
         current_timestamp = datetime.now().isoformat()
-        isValid = body.get('valid', True)
+        isValid = body.get("valid", True)
         if not isValid:
             logger.info("Invalid item data")
             # Save the item to DynamoDB
-            curr_time = datetime.now()
+            curr_time = datetime.now().isoformat()
             expiration_time = int(curr_time.timestamp()) + 86400
 
             # Calculate expiration time 24 hours from now
             expiration_time = datetime.now() + timedelta(hours=24)
-
-#            expiration_time = int(datetime.time) + 86400,  # 24 hours from now
+            # 24 hours from now
+            # expiration_time = int(datetime.time) + 86400,
             item = {
-                'PK': f"item#{uuid}",
-                'SK': f"item#{uuid}",
-                'valid': body['valid'],
-                'value': body['value'],
-                'description': body['description'],
-                'buyer': body['buyer'],
-                'expiration_time': int(expiration_time.timestamp()),  # Store as Unix timestamp
-                'item_timestamp': current_timestamp
+                "PK": f"item#{uuid}",
+                "SK": f"item#{uuid}",
+                "valid": body["valid"],
+                "value": body["value"],
+                "description": body["description"],
+                "buyer": body["buyer"],
+                # Store as Unix timestamp
+                "expiration_time": int(expiration_time.timestamp()),
+                "item_timestamp": current_timestamp,
             }
             table.put_item(Item=item)
             logger.info(f"Item saved: {item}")
         else:
             logger.info("Item data is valid")
-            valid= body['valid']
-            value=body['value']
-            description=body['description']
-            buyer=body['buyer']
+            # valid= body['valid']
+            value = body["value"]
+            description = body["description"]
+            buyer = body["buyer"]
 
             # Format the subject and message for the SNS notification.
-            subject = f"JSON is valid :"
+            subject = "JSON is valid :"
             message = (
                 f"Details:\n\n"
                 f"value: {value}\n"
@@ -73,24 +71,17 @@ def lambda_handler(event, context):
             )
             # Publish the message to the SNS topic.
             response = sns_client.publish(
-                TopicArn=SNS_TOPIC_ARN,
-                Message=message,
-                Subject=subject
+                TopicArn=SNS_TOPIC_ARN, Message=message, Subject=subject
             )
-            logger.info(f"Successfully published message to SNS. MessageId: {response['MessageId']}")
-
-
-
-
-
+            logger.info(
+                f"Successfully published message to SNS."
+                f" MessageId: {response['MessageId']}"
+            )
 
         return {
-            'statusCode': 200,
-            'body': json.dumps({'message': 'Item was processing', 'valid: ': isValid})
+            "statusCode": 200,
+            "body": json.dumps({"message": "Item was processing", "valid: ": isValid}),
         }
     except Exception as e:
         logger.error(f"Error saving item: {e}")
-        return {
-            'statusCode': 400,
-            'body': json.dumps({'error': str(e)})
-        }
+        return {"statusCode": 400, "body": json.dumps({"error": str(e)})}
