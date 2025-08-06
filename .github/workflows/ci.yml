@@ -37,8 +37,9 @@ jobs:
       - name: Run black formatting
         run: black --check --diff terraform/lambda/
       - name: Run flake8 linting
-        run: flake8 terrafotm/lambda/
-          # pytest pytest-cov flake8 pylint
+        run: |
+          cd terrafotm/lambda
+          flake8 .
 #      - name: Test with pytest
 #        run: |
 #          cd app
