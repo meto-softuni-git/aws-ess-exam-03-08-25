@@ -9,6 +9,7 @@ on:
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+  GITHUB_TOKEN: ${{ secrets.AWS_ESS_GITHUB_TOKEN}}
   AWS_REGION: "eu-central-1"
   TF_ROOT: "terraform"
   GITHUB_NAME: "meto-softuni-git/aws-ess-exam-03-08-25"
@@ -90,22 +91,38 @@ jobs:
                               --format=json \
                               --out-file=/tmp/infracost-common.json
 
-      - name: Post Infracost comment
+      - name: Infracost Breakdown (Show Resource Count in Logs)
         run: |
-            touch grype.yaml
-            infracost comment github --path=/tmp/infracost-common.json \
-                                     --repo=${{ env.GITHUB_NAME }} \
-                                     --github-token=${{ secrets.U34_FP_GITHUB_TOKEN }} \
-                                     --behavior=hide-and-new \
-                                     --commit=${{ github.sha }}
-#                                     --pr=${{ github.event.pull_request.number }}
+          infracost breakdown \
+            --path /tmp/infracost-common.json \
+            --format table \
+            --show-skipped \
+            --no-color
+      - name: Infracost GitHub PR Comment
+        run: |
+         infracost breakdown \
+             --path /tmp/infracost-common.json \
+             --format github-comment \
+             --show-skipped \
+             --no-color \
+             --github-token ${{ env.GITHUB_TOKEN }}
 
-      - name: Post Infracost comment
-        run: |
-          touch ${{ env.INFRACOST_SLACK_MESSAGE }}
-          infracost output  --path=/tmp/infracost-common.json \
-                            --format slack-message \
-                            --out-file ${{ env.INFRACOST_SLACK_MESSAGE }}
+#      - name: Post Infracost comment
+#        run: |
+#            touch grype.yaml
+#            infracost comment github --path=/tmp/infracost-common.json \
+#                                     --repo=${{ env.GITHUB_NAME }} \
+#                                     --github-token=${{ secrets.U34_FP_GITHUB_TOKEN }} \
+#                                     --behavior=hide-and-new \
+#                                     --commit=${{ github.sha }}
+##                                     --pr=${{ github.event.pull_request.number }}
+#
+#      - name: Post Infracost comment
+#        run: |
+#          touch ${{ env.INFRACOST_SLACK_MESSAGE }}
+#          infracost output  --path=/tmp/infracost-common.json \
+#                            --format slack-message \
+#                            --out-file ${{ env.INFRACOST_SLACK_MESSAGE }}
 
       - name: Terraform Plan
         id: plan
