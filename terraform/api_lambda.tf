@@ -25,12 +25,12 @@ resource "aws_iam_role" "lambda_exec" {
   })
 }
 
-# Attach basic CloudWatch logging policy
-resource "aws_iam_policy_attachment" "lambda_logs" {
-  name       = "lambda_logs"
-  roles      = [aws_iam_role.lambda_exec.name]
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-}
+## Attach basic CloudWatch logging policy
+#resource "aws_iam_policy_attachment" "lambda_logs" {
+#  name       = "lambda_logs"
+#  roles      = [aws_iam_role.lambda_exec.name]
+#  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+#}
 
 # create role lambda function to access dynamodb
 resource "aws_iam_role_policy" "dynamodb_access" {
