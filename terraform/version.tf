@@ -4,6 +4,6 @@ terraform {
     bucket         = "softuni-meto-terraform-states"
     key            = "envs/aws-examp/exam-03-08-25.tfstate"
     encrypt        = true
-    use_lockfile   = "terraform-locks"
+    dynamodb_table = "terraform-locks"
   }
 }
