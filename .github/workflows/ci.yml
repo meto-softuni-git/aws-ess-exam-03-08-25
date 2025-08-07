@@ -100,12 +100,12 @@ jobs:
                                      --commit=${{ github.sha }}
 #                                     --pr=${{ github.event.pull_request.number }}
 
-#      - name: Post Infracost comment
-#        run: |
-#          touch ${{ env.INFRACOST_SLACK_MESSAGE }}
-#          infracost output  --path=/tmp/infracost-common.json \
-#                            --format slack-message \
-#                            --out-file ${{ env.INFRACOST_SLACK_MESSAGE }}
+      - name: Post Infracost comment
+        run: |
+          touch ${{ env.INFRACOST_SLACK_MESSAGE }}
+          infracost output  --path=/tmp/infracost-common.json \
+                            --format slack-message \
+                            --out-file ${{ env.INFRACOST_SLACK_MESSAGE }}
 
       - name: Terraform Plan
         id: plan
