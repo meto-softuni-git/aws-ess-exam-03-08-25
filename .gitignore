@@ -17,3 +17,4 @@
 # Local .terraform.tfvars files
 **/terraform.tfvars
 **/ubuntu_ssh_key.pem
+**/.pat
