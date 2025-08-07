@@ -51,9 +51,9 @@ resource "aws_iam_role_policy" "lambda_delete_and_notify_publish_sns" {
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [{
-      Effect = "Allow",
-      Action = "sns:Publish",
-      Resource = aws_sns_topic.sns_topic_email.arn  # Or use "*" if testing
+      Effect   = "Allow",
+      Action   = "sns:Publish",
+      Resource = aws_sns_topic.sns_topic_email.arn # Or use "*" if testing
     }]
   })
 }
@@ -73,15 +73,15 @@ resource "aws_iam_role_policy" "lambda_delete_and_notify_custom" {
         ],
         Resource = aws_dynamodb_table.table_data.arn
       }
-#      ,
-#      {
-#        Effect = "Allow",
-#        Action = [
-#          "ses:SendEmail",
-#          "ses:SendRawEmail"
-#        ],
-#        Resource = "*"
-#      }
+      #      ,
+      #      {
+      #        Effect = "Allow",
+      #        Action = [
+      #          "ses:SendEmail",
+      #          "ses:SendRawEmail"
+      #        ],
+      #        Resource = "*"
+      #      }
     ]
   })
 }
@@ -96,17 +96,17 @@ data "archive_file" "lambda_delete_and_notify_zip" {
 
 # Create delete and notify Lambda function
 resource "aws_lambda_function" "delete_and_notify" {
-  filename      = "${var.lambda_delete_and_notify_zip_name}" # Upload your zip
-  function_name = "delete_and_notify"
-  handler       = "delete_and_notify.lambda_handler"
-  runtime       = "python3.12"
-  role          = aws_iam_role.lambda_exec_delete_and_notify.arn
+  filename         = var.lambda_delete_and_notify_zip_name # Upload your zip
+  function_name    = "delete_and_notify"
+  handler          = "delete_and_notify.lambda_handler"
+  runtime          = "python3.12"
+  role             = aws_iam_role.lambda_exec_delete_and_notify.arn
   source_code_hash = filebase64sha256("${var.lambda_delete_and_notify_zip_name}")
 
   environment {
     variables = {
       SNS_TOPIC_ARN = aws_sns_topic.sns_topic_email.arn
-      TABLE_NAME = aws_dynamodb_table.table_data.name
+      TABLE_NAME    = aws_dynamodb_table.table_data.name
     }
   }
 }

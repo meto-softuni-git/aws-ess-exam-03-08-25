@@ -36,7 +36,7 @@ def lambda_handler(event, context):
         logger.info(f"item_timestamp: {item_timestamp}")
         d1 = datetime.strptime(deleted_time.isoformat(), "%Y-%m-%dT%H:%M:%S.%f")
         d2 = datetime.strptime(item_timestamp, "%Y-%m-%dT%H:%M:%S.%f")
-        diff = (d2 - d1).total_seconds() / 60 + 180
+        diff = (d2 - d1).total_seconds() / 60 / 60 + 180
         logger.info(f"diff in minute: {diff}")
         # Delete the item from DynamoDB.
         table.delete_item(Key={"PK": item["PK"], "SK": item["SK"]})
@@ -47,7 +47,7 @@ def lambda_handler(event, context):
             f"value: {value}\n"
             f"description: {description}\n"
             f"buyer: {buyer}\n\n"
-            f"stay in base {diff} the item was received.\n"
+            f"stay in base {diff:.0f} min. \n"
         )
         # Publish the message to the SNS topic.
         response = sns_client.publish(

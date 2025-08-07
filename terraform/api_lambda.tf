@@ -14,7 +14,7 @@ resource "aws_iam_role" "lambda_exec" {
     Statement = [
       {
         Action = [
-        "sts:AssumeRole"
+          "sts:AssumeRole"
         ],
         Effect = "Allow",
         Principal = {
@@ -39,8 +39,8 @@ resource "aws_iam_role_policy" "dynamodb_access" {
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
-      Effect = "Allow"
-      Action = ["dynamodb:PutItem"]
+      Effect   = "Allow"
+      Action   = ["dynamodb:PutItem"]
       Resource = aws_dynamodb_table.table_data.arn
     }]
   })
@@ -53,9 +53,9 @@ resource "aws_iam_role_policy" "lambda_publish_sns" {
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [{
-      Effect = "Allow",
-      Action = "sns:Publish",
-      Resource = aws_sns_topic.sns_topic_email.arn  # Or use "*" if testing
+      Effect   = "Allow",
+      Action   = "sns:Publish",
+      Resource = aws_sns_topic.sns_topic_email.arn # Or use "*" if testing
     }]
   })
 }
@@ -63,18 +63,18 @@ resource "aws_iam_role_policy" "lambda_publish_sns" {
 
 # create lambda function
 resource "aws_lambda_function" "processing_json" {
-  function_name = "processing_json"
-  filename      = "${path.module}/${var.lambda_processing_json_zip_name}"
-  handler       = "processing_json.lambda_handler"
-  runtime       = "python3.11"
-  role          = aws_iam_role.lambda_exec.arn
+  function_name    = "processing_json"
+  filename         = "${path.module}/${var.lambda_processing_json_zip_name}"
+  handler          = "processing_json.lambda_handler"
+  runtime          = "python3.11"
+  role             = aws_iam_role.lambda_exec.arn
   source_code_hash = filebase64sha256("${var.lambda_processing_json_zip_name}")
-  timeout       = 10
+  timeout          = 10
 
   environment {
     variables = {
       SNS_TOPIC_ARN = aws_sns_topic.sns_topic_email.arn
-      TABLE_NAME = aws_dynamodb_table.table_data.name
+      TABLE_NAME    = aws_dynamodb_table.table_data.name
     }
   }
 }
@@ -87,10 +87,10 @@ resource "aws_apigatewayv2_api" "api" {
 
 # Create an integration between the API Gateway and the Lambda function
 resource "aws_apigatewayv2_integration" "lambda_integration" {
-  api_id           = aws_apigatewayv2_api.api.id
-  integration_type = "AWS_PROXY"
-  integration_uri  = aws_lambda_function.processing_json.invoke_arn
-  integration_method = "POST"
+  api_id                 = aws_apigatewayv2_api.api.id
+  integration_type       = "AWS_PROXY"
+  integration_uri        = aws_lambda_function.processing_json.invoke_arn
+  integration_method     = "POST"
   payload_format_version = "2.0"
 }
 

@@ -1,5 +1,5 @@
 resource "aws_dynamodb_table" "table_data" {
-  name         = var.dynamodb_table_name
+  name = var.dynamodb_table_name
 
   hash_key  = "PK"
   range_key = "SK"
@@ -17,15 +17,15 @@ resource "aws_dynamodb_table" "table_data" {
   }
 
 
-# Attributes for the Global Secondary Index (GSI)
+  # Attributes for the Global Secondary Index (GSI)
   attribute {
     name = var.gsi_hash_key
     type = "S"
   }
 
-    global_secondary_index {
-    name = var.gsi_name
-    hash_key  = var.gsi_hash_key
+  global_secondary_index {
+    name     = var.gsi_name
+    hash_key = var.gsi_hash_key
 
     # "ALL" copies all attributes.
     projection_type = "ALL"
