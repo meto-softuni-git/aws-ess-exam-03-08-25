@@ -37,9 +37,9 @@ def lambda_handler(event, context):
             #expiration_time = int(curr_time.timestamp()) + 86400
 
             # Calculate expiration time 24 hours from now
-            expiration_time = datetime.now() + timedelta(hours=24)
+            #expiration_time = datetime.now() + timedelta(hours=24)
             # 24 hours from now
-            # expiration_time = int(datetime.time) + 86400,
+            expiration_time = int(datetime.time) + 86400,
             item = {
                 "PK": f"item#{uuid}",
                 "SK": f"item#{uuid}",
@@ -48,7 +48,8 @@ def lambda_handler(event, context):
                 "description": body["description"],
                 "buyer": body["buyer"],
                 # Store as Unix timestamp
-                "expiration_time": int(expiration_time.timestamp()),
+                #"expiration_time": int(expiration_time.timestamp()),
+                "expiration_time": expiration_time,
                 "item_timestamp": current_timestamp,
             }
             table.put_item(Item=item)
