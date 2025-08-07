@@ -33,13 +33,13 @@ def lambda_handler(event, context):
         if not isValid:
             logger.info("Invalid item data")
             # Save the item to DynamoDB
-            #curr_time = datetime.now().isoformat()
-            #expiration_time = int(curr_time.timestamp()) + 86400
+            # curr_time = datetime.now().isoformat()
+            # expiration_time = int(curr_time.timestamp()) + 86400
 
             # Calculate expiration time 24 hours from now
             expiration_time = datetime.now() + timedelta(hours=24)
             # 24 hours from now
-            #expiration_time = int(datetime.time()) + 86400,
+            # expiration_time = int(datetime.time()) + 86400,
             item = {
                 "PK": f"item#{uuid}",
                 "SK": f"item#{uuid}",
