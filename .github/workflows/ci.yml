@@ -94,18 +94,18 @@ jobs:
       - name: Infracost Breakdown (Show Resource Count in Logs)
         run: |
           infracost breakdown \
-            --path /tmp/infracost-common.json \
-            --format table \
+            --path=/tmp/infracost-common.json \
+            --format=table \
             --show-skipped \
             --no-color
       - name: Infracost GitHub PR Comment
         run: |
          infracost breakdown \
-             --path /tmp/infracost-common.json \
-             --format github-comment \
+             --path=/tmp/infracost-common.json \
+             --format=github-comment \
              --show-skipped \
              --no-color \
-             --github-token ${{ env.GITHUB_TOKEN }}
+             --github-token=${{ env.GITHUB_TOKEN }}
 
 #      - name: Post Infracost comment
 #        run: |
