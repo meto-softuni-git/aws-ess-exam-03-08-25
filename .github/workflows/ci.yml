@@ -80,6 +80,18 @@ jobs:
           cd ${{ env.TF_ROOT }}
           terraform validate
 
+      - name: Terraform Plan
+        id: plan
+        run: |
+            cd ${{ env.TF_ROOT }}
+            terraform plan -out=tfplan-common -detailed-exitcode
+            echo "TF_EXIT_CODE=$?" >> $GITHUB_ENV
+
+      - name: Create infracost common plan
+        run: |
+          cd ${{ env.TF_ROOT }}
+          terraform show -json tfplan-common > infracost-common.json
+
       - name: Setup Infracost
         uses: infracost/actions/setup@v3
         with:
@@ -124,12 +136,6 @@ jobs:
 #                            --format slack-message \
 #                            --out-file ${{ env.INFRACOST_SLACK_MESSAGE }}
 
-      - name: Terraform Plan
-        id: plan
-        run: |
-            cd ${{ env.TF_ROOT }}
-            terraform plan -out=tfplan-common -detailed-exitcode
-            echo "TF_EXIT_CODE=$?" >> $GITHUB_ENV
 
       - name: Terraform Apply if changes detected
         run: |
