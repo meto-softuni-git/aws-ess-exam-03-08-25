@@ -89,20 +89,20 @@ jobs:
         run: |
           infracost breakdown --path=${{ env.TF_ROOT }}/ \
                               --format=json \
-                              --out-file=/tmp/infracost-common.json
+                              --out-file=infracost-common.json
 
       - name: Infracost Breakdown (Show Resource Count in Logs)
         run: |
           infracost breakdown \
-            --path=/tmp/infracost-common.json \
+            --path=infracost-common.json \
             --format=table \
             --show-skipped \
             --no-color
       - name: Infracost GitHub PR Comment
         run: |
          infracost breakdown \
-             --path=/tmp/infracost-common.json \
-             --format=github-comment \
+             --path=infracost-common.json \
+             --format=table \
              --show-skipped \
              --no-color \
              --github-token=${{ env.GITHUB_TOKEN }}
