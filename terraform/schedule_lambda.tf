@@ -38,14 +38,14 @@ resource "aws_iam_role" "lambda_exec_delete_and_notify" {
   })
 }
 
-resource "aws_iam_policy_attachment" "lambda_policy" {
-  name       = "lambda-basic-execution"
+resource "aws_iam_policy_attachment" "lambda_policy_delete_and_notify" {
+  name       = "lambda-basic-execution-delete-and-notify"
   roles      = [aws_iam_role.lambda_exec_delete_and_notify.name]
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
 resource "aws_iam_role_policy" "lambda_delete_and_notify_publish_sns" {
-  name = "lambda_publish_sns"
+  name = "lambda_delete_and_notify_publish_sns"
   role = aws_iam_role.lambda_exec_delete_and_notify.id
 
   policy = jsonencode({
@@ -59,7 +59,7 @@ resource "aws_iam_role_policy" "lambda_delete_and_notify_publish_sns" {
 }
 
 
-resource "aws_iam_role_policy" "lambda_custom" {
+resource "aws_iam_role_policy" "lambda_delete_and_notify_custom" {
   name = "lambda-dynamodb-email"
   role = aws_iam_role.lambda_exec_delete_and_notify.id
 
@@ -73,15 +73,16 @@ resource "aws_iam_role_policy" "lambda_custom" {
           "dynamodb:DeleteItem"
         ],
         Resource = aws_dynamodb_table.table_data.arn
-      },
-      {
-        Effect = "Allow",
-        Action = [
-          "ses:SendEmail",
-          "ses:SendRawEmail"
-        ],
-        Resource = "*"
       }
+#      ,
+#      {
+#        Effect = "Allow",
+#        Action = [
+#          "ses:SendEmail",
+#          "ses:SendRawEmail"
+#        ],
+#        Resource = "*"
+#      }
     ]
   })
 }
