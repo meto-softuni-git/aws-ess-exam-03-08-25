@@ -118,4 +118,5 @@ jobs:
         run: |
           cd ${{ env.TF_ROOT }}
           #terraform destroy --auto-approve
+          terraform refresh
           terraform apply --auto-approve tfplan-common
