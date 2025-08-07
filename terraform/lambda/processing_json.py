@@ -49,7 +49,7 @@ def lambda_handler(event, context):
                 "buyer": body["buyer"],
                 # Store as Unix timestamp
                 #"expiration_time": int(expiration_time.timestamp()),
-                "expiration_time": expiration_time,
+                "expiration_time": str(expiration_time),
                 "item_timestamp": current_timestamp,
             }
             table.put_item(Item=item)
