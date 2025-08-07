@@ -11,9 +11,9 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
   AWS_REGION: "eu-central-1"
   TF_ROOT: "terraform"
-#  GITHUB_NAME: "metodil/u34-fun-facts"
+  GITHUB_NAME: "meto-softuni-git/aws-ess-exam-03-08-25"
 #  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_TF_INFRA_AWS }}
-#  INFRACOST_SLACK_MESSAGE: "/tmp/infracost-common-slack-message.json"
+  INFRACOST_SLACK_MESSAGE: "/tmp/infracost-common-slack-message.json"
 
 
 
@@ -79,27 +79,27 @@ jobs:
           cd ${{ env.TF_ROOT }}
           terraform validate
 
-#      - name: Setup Infracost
-#        uses: infracost/actions/setup@v3
-#        with:
-#          api-key: ${{ secrets.INFRACOST_API_KEY }}
-#
-#      - name: Generate Infracost cost estimate baseline
-#        run: |
-#          infracost breakdown --path=${TF_ROOT} \
-#                              --format=json \
-#                              --out-file=/tmp/infracost-common.json
-#
-#      - name: Post Infracost comment
-#        run: |
-#            touch grype.yaml
-#            infracost comment github --path=/tmp/infracost-common.json \
-#                                     --repo=${{ env.GITHUB_NAME }} \
-#                                     --github-token=${{ secrets.U34_FP_GITHUB_TOKEN }} \
-#                                     --behavior=hide-and-new \
-#                                     --commit=${{ github.sha }}
-##                                     --pr=${{ github.event.pull_request.number }}
-#
+      - name: Setup Infracost
+        uses: infracost/actions/setup@v3
+        with:
+          api-key: ${{ secrets.INFRACOST_API_KEY }}
+
+      - name: Generate Infracost cost estimate baseline
+        run: |
+          infracost breakdown --path=${TF_ROOT} \
+                              --format=json \
+                              --out-file=/tmp/infracost-common.json
+
+      - name: Post Infracost comment
+        run: |
+            touch grype.yaml
+            infracost comment github --path=/tmp/infracost-common.json \
+                                     --repo=${{ env.GITHUB_NAME }} \
+                                     --github-token=${{ secrets.U34_FP_GITHUB_TOKEN }} \
+                                     --behavior=hide-and-new \
+                                     --commit=${{ github.sha }}
+#                                     --pr=${{ github.event.pull_request.number }}
+
 #      - name: Post Infracost comment
 #        run: |
 #          touch ${{ env.INFRACOST_SLACK_MESSAGE }}
